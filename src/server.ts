@@ -1,5 +1,7 @@
 import { createServer, IncomingMessage, RequestListener } from 'http';
-import { DoistCard, SubmitAction, ToggleInput, TextBlock, DoistCardRequest} from '@doist/ui-extensions-core';
+import type { DoistCardRequest } from '@doist/ui-extensions-core';
+import { DoistCard, ToggleInput, TextBlock } from '@doist/ui-extensions-core';
+import { LabelsCard, SubmitButton } from 'services/todoist-cards';
 
 export async function setupOAuthServer() {
   const server = createServer(requestListener);
@@ -30,11 +32,11 @@ const requestListener: RequestListener = async (req, res) => {
 
   const card = new DoistCard();
 
-  card.addItem(TextBlock.from({ text: 'Hello, my friend!' }));
-  card.addItem(ToggleInput.from({ id: 'toggle', label: 'Toggle me', defaultValue: 'true' }));
-
+  card.addItem(TextBlock.from({ text: 'AddTodoist Settings', size: 'large' }));
+  card.addItem(LabelsCard());
+  card.addItem(ToggleInput.from({ id: 'confirmOnSave', label: 'Saved Tweet Confirmation', defaultValue: 'true' }));
   // Add a button to submit the form
-  card.addAction(SubmitAction.from({ title: 'Submit' }));
+  card.addAction(SubmitButton());
 
   // Send the Adaptive Card to the renderer
   res.setHeader('Content-Type', 'application/json');
