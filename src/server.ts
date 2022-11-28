@@ -1,7 +1,7 @@
 import { createServer, IncomingMessage, RequestListener } from 'http';
 import type { DoistCardRequest } from '@doist/ui-extensions-core';
-import { DoistCard, ToggleInput, TextBlock } from '@doist/ui-extensions-core';
-import { LabelsCard, SubmitButton } from 'services/todoist-cards';
+import { generateResponseCard } from 'services/todoist-cards';
+import { findUserByTodoistId } from 'services/database';
 
 export async function setupOAuthServer() {
   const server = createServer(requestListener);
@@ -18,29 +18,30 @@ export async function setupOAuthServer() {
 const requestListener: RequestListener = async (req, res) => {
 
   // TODO - Check security headers
-  // TODO - get previious state from DB (using todoist id) [multiple accounts]
-
-  // TODO - Settings:
-  // labels, response
-  // add as note vs add as task
-  // select project
 
   const jsonreq = await getRequestBody(req);
-  console.log(jsonreq);
- 
   if (jsonreq.extensionType !== 'settings') return;
 
-  const card = new DoistCard();
+  if (jsonreq.action.actionType === 'submit') {
+    // TODO - save submit data to db
+  }
 
-  card.addItem(TextBlock.from({ text: 'AddTodoist Settings', size: 'large' }));
-  card.addItem(LabelsCard());
-  card.addItem(ToggleInput.from({ id: 'confirmOnSave', label: 'Saved Tweet Confirmation', defaultValue: 'true' }));
-  // Add a button to submit the form
-  card.addAction(SubmitButton());
+  const user = await findUserByTodoistId(String(jsonreq.context.user.id));
+  if (!user) {
+    res.writeHead(404);
+    res.end('User not found');
+    return;
+  }
+
+  const { threadLabel, tweetLabel, noResponse } = user;
+
+  // console.log(jsonreq);
+  
+  const card = generateResponseCard({ threadLabel, tweetLabel, noResponse });
 
   // Send the Adaptive Card to the renderer
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({card: card}));
+  res.end(JSON.stringify({ card }));
 };
 
 function getRequestBody(req: IncomingMessage): Promise<DoistCardRequest> {
