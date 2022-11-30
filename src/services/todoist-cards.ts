@@ -25,7 +25,7 @@ const SubmitButton = () => SubmitAction.from({ title: 'Submit', style: 'positive
 function generateResponseCard({ threadLabel, noResponse, tweetLabel }: Pick<IUserInfo, 'threadLabel' | 'noResponse' | 'tweetLabel'>): DoistCard {
   const card = new DoistCard();
   card.addItem(LabelsCard({ threadLabel, tweetLabel }));
-  card.addItem(ResponseOnSave({noResponse}));
+  card.addItem(ResponseOnSave({ noResponse }));
   card.addAction(SubmitButton());
   return card;
 }

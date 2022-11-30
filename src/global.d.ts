@@ -31,6 +31,8 @@ declare global {
     todoistId?: string;
   }
 
+  type IUserSettings = Pick<IUserInfo, 'threadLabel' | 'noResponse' | 'tweetLabel'>;
+
 }
 
 export { };
