@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage, RequestListener } from 'http';
 import type { DoistCardRequest } from '@doist/ui-extensions-core';
-import { generateResponseCard } from 'services/todoist-cards';
+import { generateNoTokenResponseCard, generateResponseCard } from 'services/todoist-cards';
 import { findUserByTodoistId } from 'services/database';
 
 export async function setupOAuthServer() {
@@ -20,7 +20,7 @@ const requestListener: RequestListener = async (req, res) => {
   // TODO - Check security headers
 
   const jsonreq = await getRequestBody(req);
-  const { extensionType, action: { actionType } } = jsonreq;
+  const { extensionType, action: { actionType, data } } = jsonreq;
 
   if (extensionType !== 'settings') return;
 
@@ -28,12 +28,12 @@ const requestListener: RequestListener = async (req, res) => {
 
   // TODO - return Card with instructions to add user;
   if (!user) {
-    res.writeHead(404);
-    res.end('User not found');
-    return;
+    const card = generateNoTokenResponseCard();
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ card }));
   }
 
-  if (actionType === 'submit') await updateUserInDatabase(user, jsonreq);
+  if (actionType === 'submit' && data?.comesFromSettingsPage) await updateUserInDatabase(user, jsonreq);
   const { threadLabel, tweetLabel, noResponse } = user;
   const card = generateResponseCard({ threadLabel, tweetLabel, noResponse });
 

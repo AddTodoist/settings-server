@@ -1,4 +1,4 @@
-import { ColumnSet, TextInput, Column, SubmitAction, ToggleInput, DoistCard } from '@doist/ui-extensions-core';
+import { ColumnSet, TextBlock, TextInput, Column, SubmitAction, ToggleInput, DoistCard } from '@doist/ui-extensions-core';
 
 const ResponseOnSave = ({ noResponse }: { noResponse: true | undefined }) => ToggleInput.from({ id: 'noResponse', label: 'Disable response when a tweet is saved', defaultValue: noResponse ? 'true' : 'false' });
 
@@ -20,7 +20,7 @@ const LabelsCard = ({ tweetLabel, threadLabel }: { tweetLabel?: string | null, t
   return labelsCol;
 };
 
-const SubmitButton = () => SubmitAction.from({ title: 'Submit', style: 'positive', loadingText: 'Saving...' });
+const SubmitButton = () => SubmitAction.from({ title: 'Submit', style: 'positive', loadingText: 'Saving...', data: { comesFromSettingsPage: true } });
 
 function generateResponseCard({ threadLabel, noResponse, tweetLabel }: Pick<IUserInfo, 'threadLabel' | 'noResponse' | 'tweetLabel'>): DoistCard {
   const card = new DoistCard();
@@ -30,4 +30,18 @@ function generateResponseCard({ threadLabel, noResponse, tweetLabel }: Pick<IUse
   return card;
 }
 
-export { LabelsCard, SubmitButton, ResponseOnSave, generateResponseCard };
+function generateNoTokenResponseCard(): DoistCard {
+  const card = new DoistCard();
+  card.addItem(TextBlock.from({ text: 'Something went wrong 😟', style: 'heading', weight: 'bolder', size: 'extraLarge' }));
+  card.addItem(TextBlock.from({ text: 'It seems like we don\'t have your Todoist info yet.', size: 'large' }));
+  card.addItem(TextBlock.from({ text: 'Please send "/init" to the bot to start your configuration', size: 'large' }));
+  card.addItem(TextBlock.from({ text: '[@AddTodoist Twitter Bot](https://twitter.com/AddTodoist)', spacing: 'large' }));
+  card.addItem(TextBlock.from({ text: 'Need help? See how to [set up the bot](https://addtodoist.vercel.app/#setup)', size: 'large', spacing: 'large' }));
+
+  card.addItem(TextBlock.from({ text: '⚠️ Note: We have migrated the DB but some recent accounts might experience this issue. Just follow the instructions avobe.', size: 'small', spacing: 'large' }));
+
+  card.addAction(SubmitAction.from({ title: 'Retry', style: 'default', loadingText: 'Retrying...' }));
+  return card;
+}
+
+export { LabelsCard, SubmitButton, ResponseOnSave, generateResponseCard, generateNoTokenResponseCard };
