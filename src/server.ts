@@ -17,7 +17,12 @@ export async function setupOAuthServer() {
 }
 
 const requestListener: RequestListener = async (req, res) => {
-  const jsonreq = await getRequestBody(req);
+  let jsonreq: DoistCardRequest;
+  try {
+    jsonreq = await getRequestBody(req);
+  } catch (e) {
+    return res.end();
+  }
 
   if (!isRequestValid(req, jsonreq)) return res.writeHead(401).end();
 
