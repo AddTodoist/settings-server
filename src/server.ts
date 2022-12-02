@@ -2,6 +2,7 @@ import { createServer, IncomingMessage, RequestListener } from 'http';
 import type { DoistCardRequest } from '@doist/ui-extensions-core';
 import { generateNoTokenResponseCard, generateResponseCard } from 'services/todoist-cards';
 import { findUserByTodoistId } from 'services/database';
+import { isRequestValid } from 'services/crypto';
 
 export async function setupOAuthServer() {
   const server = createServer(requestListener);
@@ -16,12 +17,11 @@ export async function setupOAuthServer() {
 }
 
 const requestListener: RequestListener = async (req, res) => {
-
-  // TODO - Check security headers
-
   const jsonreq = await getRequestBody(req);
-  const { extensionType, action: { actionType, data } } = jsonreq;
 
+  if (!isRequestValid(req, jsonreq)) return res.writeHead(401).end();
+
+  const { extensionType, action: { actionType, data } } = jsonreq;
   if (extensionType !== 'settings') return;
 
   const user = await findUserByTodoistId(String(jsonreq.context.user.id));
