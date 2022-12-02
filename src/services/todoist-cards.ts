@@ -1,6 +1,6 @@
 import { ColumnSet, TextBlock, TextInput, Column, SubmitAction, ToggleInput, DoistCard } from '@doist/ui-extensions-core';
 
-const ResponseOnSave = ({ noResponse }: { noResponse: true | undefined }) => ToggleInput.from({ id: 'noResponse', label: 'Disable response when a tweet is saved', defaultValue: noResponse ? 'true' : 'false' });
+const ResponseOnSave = ({ noResponse }: { noResponse: true | undefined }) => ToggleInput.from({ id: 'noResponse', label: 'Disable response on save', defaultValue: noResponse ? 'true' : 'false' });
 
 const LabelsCard = ({ tweetLabel, threadLabel }: { tweetLabel?: string | null, threadLabel?: string | null } = {}) => {
   const twLabel = tweetLabel === null ? undefined : tweetLabel === undefined ? '🐦Tweet' : tweetLabel;
@@ -24,8 +24,19 @@ const SubmitButton = () => SubmitAction.from({ title: 'Submit', style: 'positive
 
 function generateResponseCard({ threadLabel, noResponse, tweetLabel }: Pick<IUserInfo, 'threadLabel' | 'noResponse' | 'tweetLabel'>): DoistCard {
   const card = new DoistCard();
+  // title
+  card.addItem(TextBlock.from({ text: 'Customize the bot behavior', style: 'heading', weight: 'bolder', size: 'extraLarge' }));
+
+  // labels section
+  card.addItem(TextBlock.from({ text: 'Labels' , style: 'heading', weight: 'bolder', size: 'large' }));
+  card.addItem(TextBlock.from({ text: 'The bot will add these labels to the saved tweets and threads' }));
   card.addItem(LabelsCard({ threadLabel, tweetLabel }));
+  card.addItem(TextBlock.from({ text: '⚠️ Note: Left empty to disable the label', size: 'small', spacing: 'large' }));
+
+  // No response section
   card.addItem(ResponseOnSave({ noResponse }));
+
+  // submit button
   card.addAction(SubmitButton());
   return card;
 }
