@@ -1,6 +1,6 @@
 import { ColumnSet, TextBlock, TextInput, Column, SubmitAction, ToggleInput, DoistCard } from '@doist/ui-extensions-core';
 
-const ResponseOnSave = ({ noResponse }: { noResponse: true | undefined }) => ToggleInput.from({ id: 'noResponse', label: 'Disable response on save', defaultValue: noResponse ? 'true' : 'false' });
+const ResponseOnSave = ({ noResponse }: { noResponse: true | undefined }) => ToggleInput.from({ id: 'noResponse', title: 'Disable response on save', defaultValue: noResponse ? 'true' : 'false' });
 
 const LabelsCard = ({ tweetLabel, threadLabel }: { tweetLabel?: string | null, threadLabel?: string | null } = {}) => {
   const twLabel = tweetLabel === null ? undefined : tweetLabel === undefined ? '🐦Tweet' : tweetLabel;

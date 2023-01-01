@@ -1,8 +1,8 @@
 import 'services/configure-dotenv';
 import 'services/bugsnag';
 
-import { setupOAuthServer } from './server';
+import { setupSettingsServer } from './server';
 
 console.clear();
 
-await setupOAuthServer();
+await setupSettingsServer();

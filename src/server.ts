@@ -4,7 +4,7 @@ import { generateNoTokenResponseCard, generateResponseCard } from 'services/todo
 import { findUserByTodoistId } from 'services/database';
 import { isRequestValid } from 'services/crypto';
 
-export async function setupOAuthServer() {
+export async function setupSettingsServer() {
   const server = createServer(requestListener);
 
   await new Promise<void>((resolve, reject) => {
@@ -31,7 +31,6 @@ const requestListener: RequestListener = async (req, res) => {
 
   const user = await findUserByTodoistId(String(jsonreq.context.user.id));
 
-  // TODO - return Card with instructions to add user;
   if (!user) {
     const card = generateNoTokenResponseCard();
     res.setHeader('Content-Type', 'application/json');
